@@ -1,10 +1,10 @@
 import Data.List
 import System.IO
 
+-- To execute GHCi
 -- To Load Program   :l
 -- To Reload program :r
 -- To View Declaration of a Function :t
---
 
 sumOfNums = sum [1..1000]
 modEx = mod 6 4
