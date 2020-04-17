@@ -30,10 +30,5 @@ module Bloc where
               deriving Show
 
   posBloc :: Bloc -> [Posicio]
-  posBloc (Bloc pos dim)
-        | (superficie dim) > 1 = pos : posSeg : [] -- Com a màxim el bloc pot ocupar 2 posicions
-        | otherwise = pos : []
-        where superficie = areaXY
-              posSeg = if (getX dim) > 1 then (augX pos) else (augY pos)
-
-  
+  posBloc (Bloc (Posicio px py) (Dimensions dx dy _))
+        = [Posicio (x+px) (y+py) | x <- [0..dx-1], y <- [0..dy-1]]
