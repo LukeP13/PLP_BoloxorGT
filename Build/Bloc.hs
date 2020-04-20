@@ -29,6 +29,11 @@ module Bloc where
   data Bloc = Bloc Posicio Dimensions3D
               deriving Show
 
+  creaBloc :: Int -> Bloc -- Donat un gruix
+  creaBloc g = Bloc posIni dim
+              where posIni = Posicio 0 0
+                    dim = Dimensions3D 1 1 g
+
   posBloc :: Bloc -> [Posicio]
-  posBloc (Bloc posIni (Dimensions3D dx dy _)) = posList pos posFi
-        where posFi = augPos pos (dx-1) (d7-1)
+  posBloc (Bloc posIni (Dimensions3D dx dy _)) = posList posIni posFi
+        where posFi = augPos posIni (dx-1) (dy-1)
