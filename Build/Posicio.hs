@@ -14,3 +14,10 @@ module Posicio where -- Modul que conté el tipus Posicio i les seves funcions
   -- Crea una llista de Posicions desde la inicial fins la final
   posList :: Posicio -> Posicio -> [Posicio] -- Posicions inici i fi
   posList (Posicio ix iy) (Posicio fx fy) = [Posicio x y | x <- [ix..fx], y <- [iy..fy]]
+
+  -- Agrupa una llista en llistes mes petites de n elements
+  group :: Int -> [a] -> [[a]]
+  group _ [] = []
+  group n l
+    | n > 0 = (take n l) : (group n (drop n l))
+    | otherwise = error "Negative or zero n"
