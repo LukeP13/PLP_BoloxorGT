@@ -16,6 +16,6 @@ main = do
 creaMon :: [[Char]] -> IO()
 creaMon (x:y:z:list) = do
   let bloc = creaBloc (read x)
-  let tauler = creaTauler (read x) (read z) (concat list)
-  mostra tauler
+  let tauler = creaTauler (read y) (read z) list
+  putStrLn(show tauler)
   --show tauler
