@@ -18,4 +18,5 @@ creaMon (x:y:z:list) = do
   let bloc = creaBloc (read x)
   let tauler = creaTauler (read y) (read z) list
   putStrLn(show tauler)
+  putStrLn(show (casellaBuida tauler (Posicio 10 0)))
   --show tauler
