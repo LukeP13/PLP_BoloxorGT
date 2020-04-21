@@ -1,5 +1,6 @@
 import           Bloc
 import           Data.List
+import           Estat
 import           Posicio
 import           System.IO
 import           Tauler
@@ -13,11 +14,8 @@ main = do
   --putStrLn ("Fitxer " ++ nomfitxer ++ " carregat: ")
   creaMon ll
 
-creaMon :: [[Char]] -> IO()
-creaMon (x:y:z:list) = do
-  let bloc = creaBloc (read x)
-  let tauler = creaTauler (read y) (read z) list
-  putStrLn(show tauler)
-  putStrLn(show (casellaBuida tauler (Posicio 10 0)))
-  putStrLn(show (posSortida tauler))
-  --show tauler
+creaMon :: [String] -> IO()
+creaMon l = do
+  let estat = sortida l
+  print estat
+  print (resolt estat)
