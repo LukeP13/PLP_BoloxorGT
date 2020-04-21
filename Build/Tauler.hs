@@ -12,29 +12,23 @@ module Tauler where
   x `betw` (y, z) = y <= x && x <= z
 
   -- Tipus Casella
-  data Casella = Casella Posicio Char -- Posicio, Tipus
-  instance Show Casella where
-    show (Casella _ tipus) = [tipus]
+  type Casella = Char -- Posicio, Tipus
+  show' :: Casella -> String
+  show' c = [' ', c]
 
   mostraCaselles :: [Casella] -> String
-  mostraCaselles = foldr ((++) . show) []
-
-  listCaselles :: [Posicio] -> String -> [Casella] -- llista de posicions, llista de tipus
-  listCaselles pl tl
-      | length pl == length tl = [Casella p t | (p, t) <- listOfTuples pl tl]
-      | otherwise = error "Llista de posicions i tipus no concorden en mida"
+  mostraCaselles = foldr ((++) . show') []
 
   esBuida :: Casella -> Bool
-  esBuida (Casella _ tipus) = tipus == '0'
+  esBuida c = c == '0'
 
   -- Tipus Tauler
   data Tauler = Tauler Int Int [[Casella]] -- nfiles, ncolumnes, caselles
   instance Show Tauler where
     show = mostraTauler
 
-  creaTauler :: Int -> Int -> [String] -> Tauler -- nfiles, ncolumnes, tipus de cada casella
-  creaTauler x y tll = Tauler x y [listCaselles pl tl | (pl, tl) <- listOfTuples pll tll]
-                 where pll = [posList (Posicio i 0) (Posicio i (y-1)) | i <- [0..(x-1)]] -- Llista de caselles de mida x y
+  creaTauler :: Int -> Int -> [[Casella]] -> Tauler -- nfiles, ncolumnes, tipus de cada casella
+  creaTauler x y tll = Tauler x y tll
 
   casellaBuida :: Tauler -> Posicio -> Bool
   casellaBuida (Tauler tx ty cll) (Posicio px py)
