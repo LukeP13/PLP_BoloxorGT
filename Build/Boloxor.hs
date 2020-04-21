@@ -19,4 +19,5 @@ creaMon (x:y:z:list) = do
   let tauler = creaTauler (read y) (read z) list
   putStrLn(show tauler)
   putStrLn(show (casellaBuida tauler (Posicio 10 0)))
+  putStrLn(show (posSortida tauler))
   --show tauler
