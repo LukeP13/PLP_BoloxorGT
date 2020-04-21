@@ -5,7 +5,7 @@ module Posicio where -- Modul que conté el tipus Posicio i les seves funcions
 
   -- Tipus Posicio
   data Posicio = Posicio Int Int -- Posicio respecte eixos x i y
-                deriving Show
+                deriving (Show, Eq)
 
   -- Donades una Posicio i un nombre de files i columnes, dona la posicio final
   augPos :: Posicio -> Int -> Int -> Posicio

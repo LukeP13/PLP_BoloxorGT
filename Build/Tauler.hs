@@ -18,10 +18,15 @@ module Tauler where
   betw :: Ord a => a -> (a, a) -> Bool
   x `betw` (y, z) = y <= x && x <= z
 
+  isSubsetOf :: Eq a => [a] -> [a] -> Bool
+  isSubsetOf [] _ = True
+  isSubsetOf _ [] = False
+  isSubsetOf (x:xs) y = x `elem` y && isSubsetOf xs y
+
   -- Tipus Casella
   type Casella = Char -- Posicio, Tipus
   show' :: Casella -> String
-  show' c = [' ', c]
+  show' c = [c]
 
   mostraCaselles :: [Casella] -> String
   mostraCaselles = foldr ((++) . show') []
