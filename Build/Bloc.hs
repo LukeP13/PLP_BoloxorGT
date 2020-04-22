@@ -1,6 +1,4 @@
 module Bloc where
-  import Data.List()
-  import System.IO()
   import Posicio
 
   -- Tipus Dimensions
