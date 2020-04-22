@@ -2,9 +2,6 @@ module Estat where
   import Bloc
   import Tauler
   import Posicio
-  import Data.List
-  import Data.Char
-  import System.IO()
 
   -- Genèrics
   updateMatrix :: [[a]] -> a -> (Int, Int) -> [[a]]
@@ -13,7 +10,7 @@ module Estat where
 
   data Estat = Estat Bloc Tauler
   instance Show Estat where
-    show (Estat b t) = show b ++ "\n" ++ show (dibuixaBloc b t)
+    show (Estat b t) = show (dibuixaBloc b t)
 
 
   sortida :: [String] -> Estat
@@ -22,6 +19,8 @@ module Estat where
           where tauler = creaTauler (read x) (read y) caselles
                 bloc   = creaBloc (read g) $ head $ posSortida tauler
 
+  mostraMon :: Estat -> String
+  mostraMon (Estat b t) = show t
 
   resolt :: Estat -> Bool
   resolt (Estat b t) = isSubsetOf (posBloc b) (posGuanya t)

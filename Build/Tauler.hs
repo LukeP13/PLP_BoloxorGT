@@ -1,7 +1,4 @@
 module Tauler where
-  import Data.List()
-  import Data.Tuple()
-  import System.IO()
   import Posicio
 
   -- Mètodes Generics

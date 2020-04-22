@@ -1,8 +1,4 @@
 module Posicio where -- Modul que conté el tipus Posicio i les seves funcions
-  -- Imports
-  import Data.List()
-  import System.IO()
-
   -- Tipus Posicio
   data Posicio = Posicio Int Int -- Posicio respecte eixos x i y
                 deriving (Show, Eq)
