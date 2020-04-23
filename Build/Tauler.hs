@@ -1,4 +1,7 @@
 module Tauler where
+  import Data.List()
+  import Data.Tuple()
+  import System.IO()
   import Posicio
 
   -- Mètodes Generics
@@ -20,13 +23,18 @@ module Tauler where
   isSubsetOf _ [] = False
   isSubsetOf (x:xs) y = x `elem` y && isSubsetOf xs y
 
+  invert :: [[a]] -> [[a]]
+  invert [] = []
+  invert ([]:_) = []
+  invert m = [[m !! x !! y | x <- [0..length m-1]] | y <- [0..length (head m)-1]]
+
   -- Tipus Casella
   type Casella = Char -- Posicio, Tipus
   show' :: Casella -> String
   show' c = [c]
 
   mostraCaselles :: [Casella] -> String
-  mostraCaselles = foldr ((++) . show') []
+  mostraCaselles = foldr((++) . show') []
 
   esBuida :: Casella -> Bool
   esBuida c = c == '0'
@@ -37,12 +45,14 @@ module Tauler where
 
 
   -- Tipus Tauler
-  data Tauler = Tauler Int Int [[Casella]] -- nfiles, ncolumnes, caselles
+  data Tauler = Tauler Int Int [[Casella]] -- x, y, caselles
   instance Show Tauler where
-    show = mostraTauler
+    show (Tauler _ _ t) = mostraTauler $ invert t -- Inverteix la matriu de caselles per una correcta visualització
 
-  creaTauler :: Int -> Int -> [[Char]] -> Tauler -- nfiles, ncolumnes, tipus de cada casella
-  creaTauler = Tauler
+  -- Crea un tauler a partir de les dimensions x, y i el tipus de cada casella --
+  -- Inverteix la matriu ja que fitxer es llegeix invertit --
+  creaTauler :: Int -> Int -> [[Char]] -> Tauler -- x, y, tipus de cada casella
+  creaTauler x y cll = Tauler x y (invert cll)
 
   casellaBuida :: Tauler -> Posicio -> Bool
   casellaBuida (Tauler tx ty cll) (Posicio px py)
@@ -55,6 +65,9 @@ module Tauler where
   posGuanya :: Tauler -> [Posicio]
   posGuanya t = posTipus t 'G'
 
-  mostraTauler :: Tauler -> String
-  mostraTauler (Tauler _ _ []) = []
-  mostraTauler (Tauler _ _ (cl:cll)) = mostraCaselles cl ++ "\n" ++ mostraTauler (Tauler 0 0 cll)
+  mostraTauler :: [[Casella]] -> String
+  mostraTauler [] = []
+  mostraTauler (cl:cll) = mostraCaselles cl ++ "\n" ++ mostraTauler cll
+
+  showRealT :: Tauler -> String
+  showRealT (Tauler _ _ cll) = mostraTauler cll

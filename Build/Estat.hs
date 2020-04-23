@@ -2,6 +2,7 @@ module Estat where
   import Bloc
   import Tauler
   import Posicio
+  import Moviment
 
   -- Genèrics
   updateMatrix :: [[a]] -> a -> (Int, Int) -> [[a]]
@@ -25,11 +26,17 @@ module Estat where
   resolt :: Estat -> Bool
   resolt (Estat b t) = isSubsetOf (posBloc b) (posGuanya t)
 
+  fora :: Estat -> Moviment -> Bool
+  fora (Estat b t) m = False
+
   dibuixaBloc :: Bloc -> Tauler -> Tauler
   dibuixaBloc b t = Tauler 0 0 (dibuixBloc l pl)
         where pl = posBloc b
-              l = lines $ show t
+              l = lines $ showRealT t
 
   dibuixBloc :: [[Casella]] -> [Posicio] -> [[Casella]]
   dibuixBloc cll [] = cll
   dibuixBloc cll (Posicio x y:pl) = dibuixBloc (updateMatrix cll 'B' (x, y)) pl
+
+  execMovim :: Estat -> Moviment -> Estat
+  execMovim (Estat b t) m = (Estat (mou m b) t )

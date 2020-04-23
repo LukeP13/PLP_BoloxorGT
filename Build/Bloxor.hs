@@ -2,6 +2,7 @@ import           Bloc
 import           Data.Char
 import           Data.List
 import           Estat
+import           Moviment
 import           Posicio
 import           System.IO
 import           Tauler
@@ -31,21 +32,27 @@ resol estat = do
   print estat
 
 juga :: Estat -> Int -> IO ()
-juga _ 0 = putStrLn "*************** FI ******************"
-juga estat i = do
-  putStrLn $ "*************** Jugada " ++ show i ++ " ****************"
-  print estat
-  putStrLn "Cap on vols moure [w/a/s/d] [exit per sortir]?"
-  moviment <- getLine
-  putStrLn  "*****************************************\n"
+juga _ (-1) = putStrLn "*************** FI *****************"
+juga estat i
+  | resolt estat = putStrLn $ show estat ++ "\n**************** RESOLT *****************"
+  | otherwise = do
+    putStrLn $ "*************** Jugada " ++ show i ++ " ****************"
+    print estat
+    putStrLn "Cap on vols moure [w/a/s/d] [e per sortir]?"
+    moviment <- getChar
+    putStrLn  "\n*****************************************\n"
 
-  if moviment == "exit"
-    then juga estat 0
-    else juga estat (i+1)
+    if moviment == 'e'
+      then juga estat (-1)
+      else mov estat (creaMoviment moviment) i
 
 
-
-
-
-mou :: Estat -> IO ()
-mou estat = putStr ""
+mov :: Estat -> Moviment -> Int -> IO ()
+mov e Invalid i = do
+  putStrLn " MOVIMENT INVÀLID | Torna a seleccionar moviment "
+  juga e i
+mov e m i
+  | fora e m = juga e (-1)
+  | otherwise = do
+    let newE = execMovim e m
+    juga newE (i+1)
