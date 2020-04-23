@@ -31,6 +31,12 @@ module Bloc where
   creaBloc g pos = Bloc pos dim
        where dim = Dimensions3D 1 1 g
 
+  getPosBloc :: Bloc -> Posicio
+  getPosBloc (Bloc pos dim) = pos
+
+  getDimBloc :: Bloc -> Dimensions3D
+  getDimBloc (Bloc pos dim) = dim
+
   posBloc :: Bloc -> [Posicio]
   posBloc (Bloc posIni (Dimensions3D dx dy _)) = posList posIni posFi
        where posFi = augPos posIni (dx-1) (dy-1)

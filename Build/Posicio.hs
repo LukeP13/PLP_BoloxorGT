@@ -17,3 +17,9 @@ module Posicio where -- Modul que conté el tipus Posicio i les seves funcions
   group n l
     | n > 0 = (take n l) : (group n (drop n l))
     | otherwise = error "Negative or zero n"
+
+  getPosX :: Posicio -> Int
+  getPosX (Posicio x y) = x
+
+  getPosY :: Posicio -> Int
+  getPosY (Posicio x y) = y
