@@ -34,8 +34,12 @@ module Moviment where -- Modul que conté el tipus Moviment i les seves funcions
   esLegal Dreta t b = comprovarCaselles t (mou Dreta b)
   esLegal Esquerra t b = comprovarCaselles t (mou Esquerra b)
 
-  legals :: Tauler -> Bloc -> [Moviment]
-  legals t b = []
+  --afegirLegals :: Tauler -> Bloc -> [Moviment] -> [Moviment]
+  --afegirLegals t b (m:ml)
+
+  --legals :: Tauler -> Bloc -> [Moviment]
+  --legals t b = movimentsLegals m
+    --where m = [Amunt, Avall, Dreta, Esquerra]; l = []
 
   creaMoviment :: Char -> Moviment
   creaMoviment m
