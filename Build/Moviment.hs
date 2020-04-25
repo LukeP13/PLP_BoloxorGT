@@ -23,7 +23,7 @@ module Moviment where -- Modul que conté el tipus Moviment i les seves funcions
   mou m b = Bloc (modificaPos m b) (modificaDim m b)
 
   totesPlenes :: Tauler -> [Posicio] -> Bool
-  totesPlenes t (p:pl) = not(casellaBuida t p) && not(totesPlenes t pl)
+  totesPlenes t (p:pl) = not(casellaBuida t p) && (totesPlenes t pl)
 
   comprovarCaselles :: Tauler -> Bloc -> Bool
   comprovarCaselles t b = totesPlenes t (posBloc b)
@@ -34,12 +34,13 @@ module Moviment where -- Modul que conté el tipus Moviment i les seves funcions
   esLegal Dreta t b = comprovarCaselles t (mou Dreta b)
   esLegal Esquerra t b = comprovarCaselles t (mou Esquerra b)
 
-  --afegirLegals :: Tauler -> Bloc -> [Moviment] -> [Moviment]
-  --afegirLegals t b (m:ml)
+  filtrar :: [Moviment] -> Tauler -> Bloc -> [Moviment]
+  filtrar (m:ml) t b
+      | esLegal m t b = m : filtrar ml t b
+      | otherwise = filtrar ml t b
 
-  --legals :: Tauler -> Bloc -> [Moviment]
-  --legals t b = movimentsLegals m
-    --where m = [Amunt, Avall, Dreta, Esquerra]; l = []
+  legals :: Tauler -> Bloc -> [Moviment]
+  legals t b = filtrar [Amunt, Avall, Dreta, Esquerra] t b
 
   creaMoviment :: Char -> Moviment
   creaMoviment m
