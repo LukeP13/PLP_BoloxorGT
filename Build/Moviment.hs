@@ -2,7 +2,7 @@ module Moviment where -- Modul que conté el tipus Moviment i les seves funcions
   -- Imports
   import Bloc
   import Posicio
-
+  import Tauler
   -- Tipus Moviment
   data Moviment = Amunt | Avall | Dreta | Esquerra | Invalid
                 deriving Show
@@ -21,6 +21,21 @@ module Moviment where -- Modul que conté el tipus Moviment i les seves funcions
 
   mou :: Moviment -> Bloc -> Bloc
   mou m b = Bloc (modificaPos m b) (modificaDim m b)
+
+  totesPlenes :: Tauler -> [Posicio] -> Bool
+  totesPlenes t (p:pl) = not(casellaBuida t p) && not(totesPlenes t pl)
+
+  comprovarCaselles :: Tauler -> Bloc -> Bool
+  comprovarCaselles t b = totesPlenes t (posBloc b)
+
+  esLegal :: Moviment -> Tauler -> Bloc -> Bool
+  esLegal Amunt t b = comprovarCaselles t (mou Amunt b)
+  esLegal Avall t b = comprovarCaselles t (mou Avall b)
+  esLegal Dreta t b = comprovarCaselles t (mou Dreta b)
+  esLegal Esquerra t b = comprovarCaselles t (mou Esquerra b)
+
+  legals :: Tauler -> Bloc -> [Moviment]
+  legals t b = []
 
   creaMoviment :: Char -> Moviment
   creaMoviment m
