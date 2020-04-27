@@ -3,7 +3,7 @@ module Bloc where
 
   -- Tipus Dimensions
   data Dimensions3D = Dimensions3D Int Int Int -- dimensions x, y, z
-                    deriving Show
+                    deriving (Show, Eq)
 
   get :: Dimensions3D -> Char -> Int
   get (Dimensions3D x y z) c
@@ -25,7 +25,7 @@ module Bloc where
 
   -- Tipus Bloc
   data Bloc = Bloc Posicio Dimensions3D
-              deriving Show
+              deriving (Show, Eq)
 
   creaBloc :: Int -> Posicio -> Bloc -- Donat un gruix
   creaBloc g pos = Bloc pos dim
