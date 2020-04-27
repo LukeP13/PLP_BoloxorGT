@@ -30,9 +30,8 @@ main = do
 
 resol :: Estat -> IO ()
 resol estat = do
-  dijkstra estat
-  -- let solucio = buscaSolucio estat
-  -- print solucio
+  let solucio = dijkstra estat
+  print solucio
 
 juga :: Estat -> Int -> IO ()
 juga _ (-1) = putStrLn "*************** FI *****************"

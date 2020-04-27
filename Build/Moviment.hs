@@ -46,7 +46,7 @@ module Moviment where -- Modul que conté el tipus Moviment i les seves funcions
       | otherwise = filtrar ml t b
 
   legals :: Tauler -> Bloc -> [Moviment]
-  legals = filtrar [Amunt ..]
+  legals = filtrar [Amunt .. Esquerra]
 
   creaMoviment :: Char -> Moviment
   creaMoviment m

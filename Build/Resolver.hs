@@ -20,9 +20,9 @@ module Resolver where
   instance Show Solucio where
     show Inexistent = "No s'ha trobat solució"
     show (Trobada []) = "Solucio buida"
-    show (Trobada ((e,m):list)) = "Inici\n" ++ show e ++ mostraMovim list
-      where mostraMovim [] = []
-            mostraMovim ((e,m):xl) = show m ++ "\n" ++ show e ++ mostraMovim xl
+    show (Trobada ((e,m):list)) = "Inici\n" ++ show e ++ mostraMovim list 1
+      where mostraMovim [] _ = []
+            mostraMovim ((e,m):xl) i = show i ++ " " ++ show m ++ "\n" ++ show e ++ mostraMovim xl (i+1)
 
   buscaSolucio :: Estat -> Solucio
   buscaSolucio = pasSolucio (Trobada [])
@@ -33,20 +33,43 @@ module Resolver where
     | resolt estat = sol
 
 
-  dijkstra :: Estat -> IO()
-  dijkstra (Estat bloc taul) = do
-    let solucio = Trobada [(estat, Invalid)]
-    let vist = modificaDist [] [estat] True    -- Marquem visitat l'estat incial
-    let dist_aux = modificaDist [] [estat] solucio -- Afegim distància al estat inicial
-
-    let leg = legals taul bloc
-    let dist = afegeixPas dist_aux (listOfTuples (getNousEstats estat leg) leg) solucio -- Afegim un pas a les solucions dels estats seguents
+  dijkstra :: Estat -> Solucio
+  dijkstra estat = buscaMillor $ iDijkstra vist dist
+    where vist = modificaDist [] [estat] False   -- Afegim l'estat inicial
+          dist = modificaDist [] [estat] (Trobada [(estat, Invalid)]) -- Afegim distància al estat inicial
 
 
-    print dist
+  iDijkstra :: [(Estat, Bool)] -> [(Estat, Solucio)] -> [(Estat, Solucio)]
+  iDijkstra visit dist
+    | totsVisitats visit = dist
+    | otherwise = iDijkstra visita newDist
+      where e = agafaNoVisitat visit -- OK Agafem el primer estat no visitat
+            movLegals (Estat b t) = legals t b -- OK
+            leg = movLegals e    -- OK Agafem tots els moviments legals
+            estatsDest = getNousEstats e leg -- OK
+            nousEstats = [x | x <- estatsDest, x `notElem` getkeys visit] -- OK
+            newVisit = modificaDist visit nousEstats False  -- Afegim els estats al que podem arribar amb 'false'
+            visita = modificaDist newVisit [e] True
+
+            newDist = afegeixMenors dist (listOfTuples estatsDest leg) (getVal dist e)
 
 
-    where estat = Estat bloc taul
+  totsVisitats :: [(Estat, Bool)] -> Bool
+  totsVisitats [] = True
+  totsVisitats ((e, b):l) = b && totsVisitats l
+
+  agafaNoVisitat :: [(Estat, Bool)] -> Estat
+  agafaNoVisitat [] = error "Tots els nodes visitats"
+  agafaNoVisitat ((e,b):l)
+    | b = agafaNoVisitat l
+    | otherwise = e
+
+  afegeixMenors :: [(Estat, Solucio)] -> [(Estat, Moviment)] -> Solucio -> [(Estat, Solucio)]
+  afegeixMenors dist [] _ = dist
+  afegeixMenors dist ((eB,m):x) sol
+    | eB `notElem` getkeys dist = afegeixMenors (afegeixPas dist (eB,m) sol) x sol
+    | length' (getVal dist eB) > length' sol = afegeixMenors (afegeixPas dist (eB,m) sol) x sol
+    | otherwise = afegeixMenors dist x sol
 
 
   getNousEstats :: Estat -> [Moviment] -> [Estat]
@@ -62,13 +85,32 @@ module Resolver where
     where posFound = posElem dist e
 
 
-  afegeixPas ::[(Estat, Solucio)] -> [(Estat, Moviment)] -> Solucio -> [(Estat, Solucio)]
-  afegeixPas dist [] _ = dist
-  afegeixPas dist ((e,m):xs) (Trobada sol)  = afegeixPas (modificaDist dist [e] (Trobada (sol ++ [(e,m)]))) xs (Trobada sol)
+  afegeixPas ::[(Estat, Solucio)] -> (Estat, Moviment) -> Solucio -> [(Estat, Solucio)]
+  afegeixPas dist (e,m) Inexistent = error "puta"
+  afegeixPas dist (e,m) (Trobada sol) = modificaDist dist [e] (Trobada (sol++[(e,m)]))
 
+  buscaMillor :: [(Estat, Solucio)] -> Solucio
+  buscaMillor [] = Inexistent
+  buscaMillor ((e,s):l)
+    | trobada s && length' s < length' solAnt = s
+    | otherwise = solAnt
+    where solAnt = buscaMillor l
+
+  trobada :: Solucio -> Bool
+  trobada Inexistent = False
+  trobada (Trobada l) = resolt $ fst $ last l
+
+  length' :: Solucio -> Int
+  length' Inexistent = 999
+  length' (Trobada l) = length l
 
   getkeys :: [(a,b)] -> [a]
   getkeys list = [x | (x, _) <- list]
 
-  getVal :: [(a,b)] -> [b]
-  getVal list = [x | (_, x) <- list]
+  getVals :: [(a,b)] -> [b]
+  getVals list = [x | (_, x) <- list]
+
+  getVal :: Eq a => [(a,Solucio)] -> a -> Solucio
+  getVal [] _ = Inexistent
+  getVal ((x,s):l) y | x == y = s
+                     | otherwise = getVal l y

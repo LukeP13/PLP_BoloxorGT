@@ -12,7 +12,7 @@ module Estat where
   updateMatrix m val (r,c) =
     take r m ++ [updateList (m !! r) val c] ++ drop (r + 1) m
 
-  data Estat = Estat Bloc Tauler
+  data Estat = Estat Bloc Tauler | Nul
               deriving Eq
   instance Show Estat where
     show (Estat b t) = show (dibuixaBloc b t)
@@ -44,6 +44,3 @@ module Estat where
 
   execMovim :: Estat -> Moviment -> Estat
   execMovim (Estat b t) m = (Estat (mou m b) t)
-
-  valor :: Estat -> Int
-  valor (Estat (Bloc (Posicio px py) (Dimensions3D dx dy dz)) t) = 0
