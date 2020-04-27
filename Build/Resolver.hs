@@ -17,6 +17,7 @@ module Resolver where
 
   -- Tipus Solució
   data Solucio = Trobada [(Estat, Moviment)] | Inexistent
+                deriving Eq
   instance Show Solucio where
     show Inexistent = "No s'ha trobat solució"
     show (Trobada []) = "Solucio buida"
@@ -35,8 +36,8 @@ module Resolver where
 
   dijkstra :: Estat -> Solucio
   dijkstra estat = buscaMillor $ iDijkstra vist dist
-    where vist = modificaDist [] [estat] False   -- Afegim l'estat inicial
-          dist = modificaDist [] [estat] (Trobada [(estat, Invalid)]) -- Afegim distància al estat inicial
+    where vist = modValor [] [estat] False   -- Afegim l'estat inicial
+          dist = modValor [] [estat] (Trobada [(estat, Invalid)]) -- Afegim distància al estat inicial
 
 
   iDijkstra :: [(Estat, Bool)] -> [(Estat, Solucio)] -> [(Estat, Solucio)]
@@ -48,8 +49,8 @@ module Resolver where
             leg = movLegals e    -- OK Agafem tots els moviments legals
             estatsDest = getNousEstats e leg -- OK
             nousEstats = [x | x <- estatsDest, x `notElem` getkeys visit] -- OK
-            newVisit = modificaDist visit nousEstats False  -- Afegim els estats al que podem arribar amb 'false'
-            visita = modificaDist newVisit [e] True
+            newVisit = modValor visit nousEstats False  -- Afegim els estats al que podem arribar amb 'false'
+            visita = modValor newVisit [e] True
 
             newDist = afegeixMenors dist (listOfTuples estatsDest leg) (getVal dist e)
 
@@ -68,8 +69,9 @@ module Resolver where
   afegeixMenors dist [] _ = dist
   afegeixMenors dist ((eB,m):x) sol
     | eB `notElem` getkeys dist = afegeixMenors (afegeixPas dist (eB,m) sol) x sol
-    | length' (getVal dist eB) > length' sol = afegeixMenors (afegeixPas dist (eB,m) sol) x sol
+    | length' sol `betw` (0 ,length' solAnt)  = afegeixMenors (afegeixPas dist (eB,m) sol) x sol
     | otherwise = afegeixMenors dist x sol
+    where solAnt = getVal dist eB
 
 
   getNousEstats :: Estat -> [Moviment] -> [Estat]
@@ -77,31 +79,31 @@ module Resolver where
   getNousEstats eIni (m:ml) = execMovim eIni m : getNousEstats eIni ml
 
 
-  modificaDist :: Eq a => [(a, b)] -> [a] -> b -> [(a, b)]
-  modificaDist dist [] _ = dist
-  modificaDist dist (e:el) pes
-    | posFound >= 0 = modificaDist (updateList dist (e,pes) posFound) el pes
-    | otherwise = modificaDist (dist ++ [(e,pes)]) el pes
+  modValor :: Eq a => [(a, b)] -> [a] -> b -> [(a, b)]
+  modValor dist [] _ = dist
+  modValor dist (e:el) pes
+    | posFound >= 0 = modValor (updateList dist (e,pes) posFound) el pes
+    | otherwise = modValor (dist ++ [(e,pes)]) el pes
     where posFound = posElem dist e
 
 
   afegeixPas ::[(Estat, Solucio)] -> (Estat, Moviment) -> Solucio -> [(Estat, Solucio)]
-  afegeixPas dist (e,m) Inexistent = error "puta"
-  afegeixPas dist (e,m) (Trobada sol) = modificaDist dist [e] (Trobada (sol++[(e,m)]))
+  afegeixPas dist _ Inexistent = dist
+  afegeixPas dist (e,m) (Trobada sol) = modValor dist [e] (Trobada (sol++[(e,m)]))
 
   buscaMillor :: [(Estat, Solucio)] -> Solucio
   buscaMillor [] = Inexistent
   buscaMillor ((e,s):l)
-    | trobada s && length' s < length' solAnt = s
+    | trobada s && (not (trobada solAnt) || length' s < length' solAnt) = s
     | otherwise = solAnt
     where solAnt = buscaMillor l
 
   trobada :: Solucio -> Bool
   trobada Inexistent = False
-  trobada (Trobada l) = resolt $ fst $ last l
+  trobada (Trobada l) = resolt $ fst $ last l -- De l'ultim moviment de la solució agafa l'estat i comprova si està resolt
 
   length' :: Solucio -> Int
-  length' Inexistent = 999
+  length' Inexistent = -1
   length' (Trobada l) = length l
 
   getkeys :: [(a,b)] -> [a]
