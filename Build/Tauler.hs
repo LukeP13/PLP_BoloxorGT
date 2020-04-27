@@ -46,13 +46,14 @@ module Tauler where
 
   -- Tipus Tauler
   data Tauler = Tauler Int Int [[Casella]] -- x, y, caselles
+                deriving Eq
   instance Show Tauler where
     show (Tauler _ _ t) = mostraTauler $ invert t -- Inverteix la matriu de caselles per una correcta visualització
 
   -- Crea un tauler a partir de les dimensions x, y i el tipus de cada casella --
   -- Inverteix la matriu ja que fitxer es llegeix invertit --
-  creaTauler :: Int -> Int -> [[Char]] -> Tauler -- x, y, tipus de cada casella
-  creaTauler x y cll = Tauler x y (invert cll)
+  creaTauler :: Int -> Int -> [[Casella]] -> Tauler -- x, y, tipus de cada casella
+  creaTauler x y cll = Tauler y x (invert cll)
 
   casellaBuida :: Tauler -> Posicio -> Bool
   casellaBuida (Tauler tx ty cll) (Posicio px py)

@@ -4,6 +4,7 @@ import           Data.List
 import           Estat
 import           Moviment
 import           Posicio
+import           Resolver
 import           System.IO
 import           Tauler
 
@@ -29,7 +30,9 @@ main = do
 
 resol :: Estat -> IO ()
 resol estat = do
-  print estat
+  dijkstra estat
+  -- let solucio = buscaSolucio estat
+  -- print solucio
 
 juga :: Estat -> Int -> IO ()
 juga _ (-1) = putStrLn "*************** FI *****************"

@@ -5,11 +5,15 @@ module Estat where
   import Moviment
 
   -- Genèrics
+  updateList :: [a] -> a -> Int -> [a]
+  updateList l val pos = take pos l ++ [val] ++ drop (pos + 1) l
+
   updateMatrix :: [[a]] -> a -> (Int, Int) -> [[a]]
-  updateMatrix m x (r,c) =
-    take r m ++ [take c (m !! r) ++ [x] ++ drop (c + 1) (m !! r)] ++ drop (r + 1) m
+  updateMatrix m val (r,c) =
+    take r m ++ [updateList (m !! r) val c] ++ drop (r + 1) m
 
   data Estat = Estat Bloc Tauler
+              deriving Eq
   instance Show Estat where
     show (Estat b t) = show (dibuixaBloc b t)
 
@@ -27,7 +31,7 @@ module Estat where
   resolt (Estat b t) = isSubsetOf (posBloc b) (posGuanya t)
 
   fora :: Estat -> Moviment -> Bool
-  fora (Estat b t) m = False
+  fora (Estat b t) m = not $ esLegal m t b
 
   dibuixaBloc :: Bloc -> Tauler -> Tauler
   dibuixaBloc b t = Tauler 0 0 (dibuixBloc l pl)
@@ -39,4 +43,7 @@ module Estat where
   dibuixBloc cll (Posicio x y:pl) = dibuixBloc (updateMatrix cll 'B' (x, y)) pl
 
   execMovim :: Estat -> Moviment -> Estat
-  execMovim (Estat b t) m = (Estat (mou m b) t )
+  execMovim (Estat b t) m = (Estat (mou m b) t)
+
+  valor :: Estat -> Int
+  valor (Estat (Bloc (Posicio px py) (Dimensions3D dx dy dz)) t) = 0
