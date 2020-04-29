@@ -6,7 +6,9 @@ module Resolver where
   import Moviment
   import Tauler
 
-  -- Genèrics
+  -- Mètodes Genèrics
+
+  -- Retorna la posició on es troba la tupla amb la clau entrada (si existeix)
   posElem :: Eq a => [(a, b)] -> a -> Int
   posElem = buscaElem 0
     where buscaElem _ [] _ = -1
@@ -33,13 +35,14 @@ module Resolver where
   pasSolucio sol estat
     | resolt estat = sol
 
-
+  -- Executa l'algorisme de Dijkstra per trobar la millor solució a partir d'un estat
   dijkstra :: Estat -> Solucio
   dijkstra estat = buscaMillor $ iDijkstra vist dist
     where vist = modValor [] [estat] False   -- Afegim l'estat inicial
           dist = modValor [] [estat] (Trobada [(estat, Invalid)]) -- Afegim distància al estat inicial
 
 
+  -- Funció recursiva d'inmersió que executa l'algorisme de Dijkstra i retorna una solució si hi ha
   iDijkstra :: [(Estat, Bool)] -> [(Estat, Solucio)] -> [(Estat, Solucio)]
   iDijkstra visit dist
     | totsVisitats visit = dist
@@ -54,13 +57,14 @@ module Resolver where
 
             newDist = afegeixMenors dist (listOfTuples estatsDest leg) (getVal dist e)
 
-
+  -- Retorna cert si tots els estats de la llista han estat visitats o fals altrament
   totsVisitats :: [(Estat, Bool)] -> Bool
   totsVisitats [] = True
   totsVisitats ((e, b):l) = b && totsVisitats l
 
+  -- Retorna el primer estat que trobem com a no visitat a la llista (si hi ha algun no visitat)
   agafaNoVisitat :: [(Estat, Bool)] -> Estat
-  agafaNoVisitat [] = error "Tots els nodes visitats"
+  agafaNoVisitat [] = error "Tots els nodes visitats" -- Error en cas d'haver visitat ja tots els nodes
   agafaNoVisitat ((e,b):l)
     | b = agafaNoVisitat l
     | otherwise = e
@@ -73,11 +77,9 @@ module Resolver where
     | otherwise = afegeixMenors dist x sol
     where solAnt = getVal dist eB
 
-
   getNousEstats :: Estat -> [Moviment] -> [Estat]
   getNousEstats _ [] = []
   getNousEstats eIni (m:ml) = execMovim eIni m : getNousEstats eIni ml
-
 
   modValor :: Eq a => [(a, b)] -> [a] -> b -> [(a, b)]
   modValor dist [] _ = dist
@@ -86,11 +88,11 @@ module Resolver where
     | otherwise = modValor (dist ++ [(e,pes)]) el pes
     where posFound = posElem dist e
 
-
   afegeixPas ::[(Estat, Solucio)] -> (Estat, Moviment) -> Solucio -> [(Estat, Solucio)]
   afegeixPas dist _ Inexistent = dist
   afegeixPas dist (e,m) (Trobada sol) = modValor dist [e] (Trobada (sol++[(e,m)]))
 
+  -- Busca la millor solució de la llista
   buscaMillor :: [(Estat, Solucio)] -> Solucio
   buscaMillor [] = Inexistent
   buscaMillor ((e,s):l)
@@ -98,20 +100,25 @@ module Resolver where
     | otherwise = solAnt
     where solAnt = buscaMillor l
 
+  -- Retona cert en cas que el darrer moviment de la solució sigui resolt o fals altrament
   trobada :: Solucio -> Bool
   trobada Inexistent = False
   trobada (Trobada l) = resolt $ fst $ last l -- De l'ultim moviment de la solució agafa l'estat i comprova si està resolt
 
+  -- Retorna el nombre de passes de la solució
   length' :: Solucio -> Int
   length' Inexistent = -1
   length' (Trobada l) = length l
 
+  -- Retorna les claus de la llista de parelles
   getkeys :: [(a,b)] -> [a]
   getkeys list = [x | (x, _) <- list]
 
+  -- Retorna els valors de la llista de parelles
   getVals :: [(a,b)] -> [b]
   getVals list = [x | (_, x) <- list]
 
+  -- Retorna la solució que la seva clau coincideix amb el valor entrat
   getVal :: Eq a => [(a,Solucio)] -> a -> Solucio
   getVal [] _ = Inexistent
   getVal ((x,s):l) y | x == y = s
