@@ -27,20 +27,11 @@ module Resolver where
       where mostraMovim [] _ = []
             mostraMovim ((e,m):xl) i = show i ++ " " ++ show m ++ "\n" ++ show e ++ mostraMovim xl (i+1)
 
-  buscaSolucio :: Estat -> Solucio
-  buscaSolucio = pasSolucio (Trobada [])
-
-  pasSolucio :: Solucio -> Estat -> Solucio
-  pasSolucio Inexistent _ = Inexistent
-  pasSolucio sol estat
-    | resolt estat = sol
-
   -- Executa l'algorisme de Dijkstra per trobar la millor solució a partir d'un estat
   dijkstra :: Estat -> Solucio
   dijkstra estat = buscaMillor $ iDijkstra vist dist
     where vist = modValor [] [estat] False   -- Afegim l'estat inicial
           dist = modValor [] [estat] (Trobada [(estat, Invalid)]) -- Afegim distància al estat inicial
-
 
   -- Funció recursiva d'inmersió que executa l'algorisme de Dijkstra i retorna una solució si hi ha
   iDijkstra :: [(Estat, Bool)] -> [(Estat, Solucio)] -> [(Estat, Solucio)]
@@ -69,6 +60,7 @@ module Resolver where
     | b = agafaNoVisitat l
     | otherwise = e
 
+  -- Afegeix la possible solució per arribar als estats determinats en cas que la solució sigui més curta que l'anterior
   afegeixMenors :: [(Estat, Solucio)] -> [(Estat, Moviment)] -> Solucio -> [(Estat, Solucio)]
   afegeixMenors dist [] _ = dist
   afegeixMenors dist ((eB,m):x) sol
@@ -77,10 +69,12 @@ module Resolver where
     | otherwise = afegeixMenors dist x sol
     where solAnt = getVal dist eB
 
+  -- Retorna la llista de estats donats al aplicar cada moviment a partir de un mateix Estat
   getNousEstats :: Estat -> [Moviment] -> [Estat]
   getNousEstats _ [] = []
   getNousEstats eIni (m:ml) = execMovim eIni m : getNousEstats eIni ml
 
+  -- Coloca el valor donat (b) a cada una de les posicions indexada per cada una de les claus (a) donades
   modValor :: Eq a => [(a, b)] -> [a] -> b -> [(a, b)]
   modValor dist [] _ = dist
   modValor dist (e:el) pes
@@ -88,6 +82,7 @@ module Resolver where
     | otherwise = modValor (dist ++ [(e,pes)]) el pes
     where posFound = posElem dist e
 
+  -- A partir de una solució i una parella de estat/moviment, crea la nova solució i la insereix o modifica a la llista
   afegeixPas ::[(Estat, Solucio)] -> (Estat, Moviment) -> Solucio -> [(Estat, Solucio)]
   afegeixPas dist _ Inexistent = dist
   afegeixPas dist (e,m) (Trobada sol) = modValor dist [e] (Trobada (sol++[(e,m)]))
@@ -113,10 +108,6 @@ module Resolver where
   -- Retorna les claus de la llista de parelles
   getkeys :: [(a,b)] -> [a]
   getkeys list = [x | (x, _) <- list]
-
-  -- Retorna els valors de la llista de parelles
-  getVals :: [(a,b)] -> [b]
-  getVals list = [x | (_, x) <- list]
 
   -- Retorna la solució que la seva clau coincideix amb el valor entrat
   getVal :: Eq a => [(a,Solucio)] -> a -> Solucio
