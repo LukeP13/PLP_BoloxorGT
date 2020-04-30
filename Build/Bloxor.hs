@@ -44,12 +44,12 @@ juga estat i
     putStrLn $ "*************** Jugada " ++ show i ++ " ****************"
     print estat
     putStrLn "Cap on vols moure [w/a/s/d] [e per sortir]?"
-    moviment <- getChar
+    moviment <- getLine
     putStrLn  "\n*****************************************\n"
 
-    if moviment == 'e'
+    if head moviment == 'e'
       then juga estat (-1) -- Sortir
-      else modificaEstat estat (creaMoviment moviment) i -- Moure bloc
+      else modificaEstat estat (creaMoviment $ head moviment) i -- Moure bloc
 
 -- Fer un moviment en un determinat estat
 modificaEstat :: Estat -> Moviment -> Int -> IO ()
