@@ -24,10 +24,6 @@ module Bloc where
   getZ :: Dimensions3D -> Int
   getZ dim = get dim 'z'
 
-  -- Retorna l'area de base X i altura Y
-  areaXY :: Dimensions3D -> Int
-  areaXY (Dimensions3D x y _) = x * y
-
   -- Tipus Bloc
   data Bloc = Bloc Posicio Dimensions3D
               deriving (Show, Eq)
@@ -36,14 +32,6 @@ module Bloc where
   creaBloc :: Int -> Posicio -> Bloc -- Donat un gruix
   creaBloc g pos = Bloc pos dim
        where dim = Dimensions3D 1 1 g -- X i Y són iguals a 1
-
-  -- Retorna la posició actual del bloc
-  getPosBloc :: Bloc -> Posicio
-  getPosBloc (Bloc pos dim) = pos
-
-  -- Retorna les dimensions actuals del bloc
-  getDimBloc :: Bloc -> Dimensions3D
-  getDimBloc (Bloc pos dim) = dim
 
   -- Retorna en forma de llista totes les posicions que ocupen l'areaXY del bloc al tauler (les posicions que el bloc està "trepitjant")
   posBloc :: Bloc -> [Posicio]
