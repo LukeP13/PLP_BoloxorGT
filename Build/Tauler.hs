@@ -38,6 +38,7 @@ module Tauler where
   -- Tipus Casella
   type Casella = Char -- Posicio, Tipus
   show' :: Casella -> String
+  show' 'S' = ['1']
   show' c = [c]
 
   -- Mostra les caselles de la llista
