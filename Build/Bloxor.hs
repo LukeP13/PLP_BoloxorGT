@@ -13,7 +13,7 @@ main :: IO ()
 main = do
   putStrLn "Entra el nom del fitxer de configuració -> "
   nomfitxer <- getLine
-  fitxer <- readFile ("../test/" ++ nomfitxer)
+  fitxer <- readFile (nomfitxer)
   let ll = lines fitxer
 
   -- Carrega i Mostra estat inicial
